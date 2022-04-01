@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/freischarler/hexpattern/domain"
 	"github.com/freischarler/hexpattern/service"
@@ -11,12 +12,24 @@ import (
 
 //USER- HandlerAdapter -> IPortService -> (Domain LOGIC) -> IPortRepository -> DBAdapter -> DB
 
-func Start() {
+const defaultAddr = "localhost"
+const defaultPort = "9000"
 
+func Start() {
+	serverPort := os.Getenv("PORT")
+	if serverPort == "" {
+		serverPort = defaultPort
+	}
+
+	addr := os.Getenv("IP")
+	if addr == "" {
+		addr = defaultAddr
+	}
 	router := mux.NewRouter()
 
 	//wiring
 	ch := CustomerHandlers{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
+	//ch := CustomerHandlers{service.NewCustomerService(domain.NewCustomerRepositoryDb())}
 
 	//define routes
 	router.HandleFunc("/greet", greet).Methods(http.MethodGet)
@@ -24,5 +37,5 @@ func Start() {
 	router.HandleFunc("/customers", ch.getAllCustomers)
 
 	//starting server
-	log.Fatal(http.ListenAndServe("localhost:8000", router))
+	log.Fatal(http.ListenAndServe(addr+":"+serverPort, router))
 }
