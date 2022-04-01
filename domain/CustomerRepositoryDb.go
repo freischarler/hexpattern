@@ -46,6 +46,13 @@ func NewCustomerRepositoryDb() CustomerRepositoryDb {
 	// we keep it empty it will load .env from current directory
 	var psqlInfo string
 
+	/*
+		//Alternative method with .env variables
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}*/
+
 	if os.Getenv("pgHost") == "" {
 		fmt.Println("Cant get env fron os.Getenv, get env from config.json")
 		filename := "./config.json"
