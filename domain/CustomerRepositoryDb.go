@@ -2,12 +2,15 @@ package domain
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	// registering database driver
+
 	_ "github.com/lib/pq"
 )
 
@@ -39,12 +42,39 @@ func (d CustomerRepositoryDb) FindAll() ([]Customer, error) {
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		"database",
-		5432,
-		"postgres",
-		"root",
-		"golang-docker")
+	// load .env file from given path
+	// we keep it empty it will load .env from current directory
+	var psqlInfo string
+
+	if os.Getenv("pgHost") == "" {
+		fmt.Println("Cant get env fron os.Getenv, get env from config.json")
+		filename := "./config.json"
+
+		jsonFile, err := os.Open(filename)
+		if err != nil {
+			fmt.Printf("failed to open json file: %s, error: %v", filename, err)
+			panic(err)
+		}
+		defer jsonFile.Close()
+
+		jsonData, err := ioutil.ReadAll(jsonFile)
+		if err != nil {
+			fmt.Printf("failed to read json file, error: %v", err)
+			panic(err)
+		}
+
+		data := Data{}
+		if err := json.Unmarshal(jsonData, &data); err != nil {
+			fmt.Printf("failed to unmarshal json file, error: %v", err)
+			panic(err)
+		}
+
+		psqlInfo = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			data.Host, data.Port, data.User, data.Password, data.DBName)
+	} else {
+		psqlInfo = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			os.Getenv("pgHost"), os.Getenv("pgPort"), os.Getenv("pgUser"), os.Getenv("pgPassword"), os.Getenv("pgDbName"))
+	}
 
 	client, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -75,4 +105,12 @@ func MakeMigration(db *sql.DB) error {
 	}
 
 	return rows.Close()
+}
+
+type Data struct {
+	Host     string `json:"pgHost"`
+	Port     string `json:"pgPort"`
+	User     string `json:"pgUser"`
+	Password string `json:"pgPassword"`
+	DBName   string `json:"pgDBname"`
 }

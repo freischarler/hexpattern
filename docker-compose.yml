@@ -7,6 +7,12 @@ services:
       dockerfile: Dockerfile #use the dockerfile called Dockerfile
     ports:
       - "9000:9000" #forward port from my app to the OS
+    environment:
+      pgHost: "database"
+      pgPort: 5432
+      pgUser: "postgres"
+      pgPassword: "postgres_docker"
+      pgDbName: "postgres"      
     restart: on-failure
     volumes:
       - api:/usr/src/app/
