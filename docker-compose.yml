@@ -12,6 +12,8 @@ services:
       - api:/usr/src/app/
     depends_on:
       - database          # Uncomment this when using postgres.
+    links:
+      - database
     networks:
       - backend
 
@@ -23,7 +25,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=golang-docker
-      - DATABASE_HOST=database
     ports:
       - '5432:5432'
     volumes:
@@ -58,3 +59,6 @@ networks:
 # docker-compose down
 #curl http://localhost:9000/greet                     #test1
 #curl http://localhost:9000/customers                 #test2
+
+#docker-compose up -d db
+#docker-compose logs -f db

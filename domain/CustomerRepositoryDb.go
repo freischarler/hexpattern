@@ -40,7 +40,7 @@ func (d CustomerRepositoryDb) FindAll() ([]Customer, error) {
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		"127.0.0.1",
+		"database",
 		5432,
 		"postgres",
 		"root",

@@ -12,7 +12,7 @@ ENV IP "0.0.0.0"
 WORKDIR /hex
 # Install any required modules
 COPY . .
-COPY .env ./.env
+COPY .env .   
 # Copy over Go source code
 RUN go mod download
 # Make sure to expose the port the HTTP server is using
