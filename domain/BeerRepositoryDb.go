@@ -12,7 +12,6 @@ import (
 	"time"
 
 	// registering database driver
-
 	_ "github.com/lib/pq"
 )
 
@@ -46,21 +45,10 @@ func (d BeerRepositoryDb) GetAll() ([]Beer, int) {
 func (d BeerRepositoryDb) PostOne(b Beer) int {
 	sqlInsert := "INSERT INTO beers (beer_id, name, brewery, country, price, currency) VALUES ($1,$2,$3,$4,$5,$6)"
 
-	n, err := GetPrice(b.Currency)
-	if err != 200 {
-		//err.Error("El ID de la cerveza ya existe")
-		return 400
-		//return err
-	}
-
-	b.Price = b.Price / n
-	b.Currency = "USD"
-	//fmt.Print(b)
 	_, error := d.client.Exec(sqlInsert, b.Id, b.Name, b.Brewery, b.Country, b.Price, b.Currency)
 	if error != nil {
 		//err.Error("El ID de la cerveza ya existe")
 		return 409
-		//return err
 	}
 	return 201
 }
@@ -92,12 +80,12 @@ func (d BeerRepositoryDb) GetBoxPrice(id string, currency string, count int) (fl
 		return 0, 404
 	}
 
-	factor, err := GetPrice(currency)
+	factor, err := GetPrice(beer.Currency, currency)
 	if err != 200 {
 		log.Fatal(err)
 	}
 
-	price := beer.Price * float64(count) / factor
+	price := beer.Price * float64(count) * factor
 	fmt.Println(price)
 	return price, 200
 }
@@ -147,22 +135,33 @@ type Data struct {
 	DBName   string `json:"pgDBname"`
 }
 
-func GetPrice(currency_type string) (float64, int) {
+func GetPrice(currency_source string, currency_destiny string) (float64, int) {
 	currencyApiKey := os.Getenv("CURRENCY_LAYER_KEY")
 	if currencyApiKey == "" {
 		log.Fatal("Error: Can't get CURRENCY ENV")
 	}
 
-	r, err := http.Get("http://api.currencylayer.com/live?access_key=" + currencyApiKey + "&currencies=" + currency_type + "&source=USD&format=1")
+	//No valid in free subscription
+	/*r, err := http.Get("http://api.currencylayer.com/convert?access_key=" + currencyApiKey + "&from=" + currency_source + "&to=" + currency_destine + "&amount=" + fmt.Sprintf("%v", amount))
 	if err != nil {
 		log.Fatal(err)
+	}*/
+
+	r, err := http.Get("http://api.currencylayer.com/live?access_key=" + currencyApiKey)
+	if err != nil {
+		return 0, 404
 	}
 
 	var d interface{}
 	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
-		log.Fatal(err)
+		return 0, 404
 	}
 
-	value := (d.(map[string]interface{})["quotes"].(map[string]interface{})[("USD" + currency_type)]).(float64)
+	factor1 := (d.(map[string]interface{})["quotes"].(map[string]interface{})[("USD" + currency_source)]).(float64)
+
+	factor2 := (d.(map[string]interface{})["quotes"].(map[string]interface{})[("USD" + currency_destiny)]).(float64)
+
+	value := 1 / factor1 * factor2
+
 	return value, 200
 }

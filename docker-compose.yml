@@ -8,11 +8,11 @@ services:
     ports:
       - "9000:9000" #forward port from my app to the OS
     environment:
-      pgHost: "database"
-      pgPort: 5432
-      pgUser: "postgres"
-      pgPassword: "postgres_docker"
-      pgDbName: "postgres"      
+      PGHOST: "database"
+      PGPORT: 5432
+      PGUSER: "postgres"
+      PGPASSWORD: "postgres_docker"
+      PGDBNAME: "postgres"      
     restart: on-failure
     volumes:
       - api:/usr/src/app/

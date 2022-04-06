@@ -17,7 +17,6 @@ const defaultAddr = "localhost"
 const defaultPort = "9000"
 
 func Start() {
-
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Some error occured. Err: %s", err)
