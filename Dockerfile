@@ -22,5 +22,5 @@ EXPOSE 9000
 ENTRYPOINT ["/out"]
 
 #docker build -t hex .
-#docker run -d -p 9000:9000 -t hello                  #-d for keep using terminal
-#curl http://localhost:9000/greet                     #test
+#docker run -d -p 9000:9000 -t hello                  
+#curl http://localhost:9000/beers                     #test

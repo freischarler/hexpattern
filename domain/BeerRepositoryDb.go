@@ -68,7 +68,6 @@ func (d BeerRepositoryDb) GetOneByID(id string) (Beer, int) {
 	if err != nil {
 		return beer, 404
 	}
-
 	return beer, 200
 }
 
@@ -93,7 +92,6 @@ func (d BeerRepositoryDb) GetBoxPrice(id string, currency string, count int) (fl
 func NewBeerRepositoryDb() BeerRepositoryDb {
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		os.Getenv("PGHOST"), os.Getenv("PGPORT"), os.Getenv("PGUSER"), os.Getenv("PGPASSWORD"), os.Getenv("PGDBNAME"))
-
 	log.Print(psqlInfo)
 
 	client, err := sql.Open("postgres", psqlInfo)

@@ -11,7 +11,7 @@ services:
       PGHOST: "database"
       PGPORT: 5432
       PGUSER: "postgres"
-      PGPASSWORD: "postgres_docker"
+      PGPASSWORD: "root"
       PGDBNAME: "postgres"      
     restart: on-failure
     volumes:
@@ -60,11 +60,7 @@ volumes:
 networks:
     backend:
 
-
 # docker-compose up -d --build          
 # docker-compose down
-#curl http://localhost:9000/greet                     #test1
-#curl http://localhost:9000/customers                 #test2
 
-#docker-compose up -d db
-#docker-compose logs -f db
+
