@@ -1,14 +1,11 @@
-CREATE TABLE IF NOT EXISTS customers (
-    customer_id serial NOT NULL,
+CREATE TABLE IF NOT EXISTS beers (
+    beer_id serial NOT NULL,
     name VARCHAR(100) NOT NULL UNIQUE,
-    date_of_birth date NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    zipcode VARCHAR(10) NOT NULL,
-    status int NOT NULL, 
-    CONSTRAINT pk_customers PRIMARY KEY(customer_id)
+    brewery VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    price FLOAT NOT NULL,
+    currency VARCHAR(100) NOT NULL, 
+    CONSTRAINT pk_beer PRIMARY KEY(beer_id)
 );
-
-INSERT INTO customers VALUES (1, 'Martin', '1989-09-08', 'Parana', '3100', 1)  ON CONFLICT DO NOTHING;
-INSERT INTO customers VALUES (2, 'Nicole', '2001-01-01', 'Parana', '3100', 1)  ON CONFLICT DO NOTHING;
 
 

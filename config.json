@@ -1,7 +1,0 @@
-{
-  "pgHost": "localhost",
-  "pgPort": "5432",
-  "pgUser": "postgres",
-  "pgPassword": "root",
-  "pgDBname":"golang-docker"
-}
